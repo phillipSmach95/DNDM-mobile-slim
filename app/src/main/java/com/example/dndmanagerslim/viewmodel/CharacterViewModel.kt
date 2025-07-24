@@ -25,10 +25,26 @@ class CharacterViewModel(private val repository: CharacterRepository) : ViewMode
             try {
                 val result = repository.getCharacters()
                 _characters.value = result
+
             } catch (e: Exception) {
                 // Fehlerbehandlung
                 e.printStackTrace()
             }
+        }
+    }
+    fun getModifier(stat: Int): String {
+        return when {
+            stat >= 20 -> "+5"
+            stat >= 18 -> "+4"
+            stat >= 16 -> "+3"
+            stat >= 14 -> "+2"
+            stat >= 12 -> "+1"
+            stat >= 10 -> "0"
+            stat >= 8 -> "-1"
+            stat >= 6 -> "-2"
+            stat >= 4 -> "-3"
+            stat >= 2 -> "-4"
+            else -> "-5" // Für Werte unter 1
         }
     }
 }

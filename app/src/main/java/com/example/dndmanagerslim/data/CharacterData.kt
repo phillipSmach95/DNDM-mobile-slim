@@ -18,7 +18,13 @@ data class Stats(
     val constitution: Int,
     val intelligence: Int,
     val wisdom: Int,
-    val charisma: Int
+    val charisma: Int,
+    val strengthModifier: Int = calculateModifier(strength),
+    val dexterityModifier: Int = calculateModifier(dexterity),
+    val constitutionModifier: Int = calculateModifier(constitution),
+    val intelligenceModifier: Int = calculateModifier(intelligence),
+    val wisdomModifier: Int = calculateModifier(wisdom),
+    val charismaModifier: Int = calculateModifier(charisma)
 )
 
 data class Skills(
@@ -45,3 +51,20 @@ data class Spell(
     val level: Int,
     val school: String
 )
+
+
+fun calculateModifier(score: Int): Int {
+    return when {
+        score < 1 -> -5 // Minimum modifier for scores below 1
+        score <= 3 -> -4
+        score <= 5 -> -3
+        score <= 7 -> -2
+        score <= 9 -> -1
+        score <= 11 -> 0
+        score <= 13 -> 1
+        score <= 15 -> 2
+        score <= 17 -> 3
+        score <= 19 -> 4
+        else -> 5 // Maximum modifier for scores above 20
+    }
+}
