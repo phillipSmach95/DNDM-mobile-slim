@@ -3,14 +3,14 @@ package com.example.dndmanagerslim.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dndmanagerslim.data.Character
-import com.example.dndmanagerslim.repository.CharacterRepository
+import com.example.dndmanagerslim.repository.DndRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
-class CharacterViewModel(private val repository: CharacterRepository) : ViewModel() {
+class CharacterViewModel(private val repository: DndRepository) : ViewModel() {
 
     private val _characters = MutableStateFlow<List<Character>>(emptyList())
     val characters: StateFlow<List<Character>> = _characters.asStateFlow()

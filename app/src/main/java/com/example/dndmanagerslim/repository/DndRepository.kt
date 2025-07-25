@@ -7,7 +7,7 @@ import com.example.dndmanagerslim.data.PlacesData
 import com.example.dndmanagerslim.data.QuestData
 import com.example.dndmanagerslim.data.SessionData
 
-class CharacterRepository(private val apiService: ApiService) {
+class DndRepository(private val apiService: ApiService) {
 
     // Character Management Functions
     suspend fun getCharacters(): List<Character> {

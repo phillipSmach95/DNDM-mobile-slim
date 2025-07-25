@@ -1,7 +1,7 @@
 package com.example.dndmanagerslim.data
 
 data class QuestData(
-    val questId: String, // entspricht quest_id, eindeutig
+    val quest_id: String, // entspricht quest_id, eindeutig
     val title: String,
     val description: String,
     val status: String,
