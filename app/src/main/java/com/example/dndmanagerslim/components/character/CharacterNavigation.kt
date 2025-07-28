@@ -1,4 +1,4 @@
-package com.example.dndmanagerslim.components.character.npc
+package com.example.dndmanagerslim.components.character
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

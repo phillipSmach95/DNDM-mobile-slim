@@ -24,7 +24,7 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.dndmanagerslim.components.character.npc.CharacterNavigation
+import com.example.dndmanagerslim.components.character.CharacterNavigation
 import com.example.dndmanagerslim.data.Character
 import com.example.dndmanagerslim.data.Stats
 import com.example.dndmanagerslim.viewmodel.CharacterViewModel
