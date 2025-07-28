@@ -43,6 +43,7 @@ enum class PlayerCharacterTabs(val index: Int, val title: String) {
 
 @Composable
 fun CharacterNavigation(
+    modifier: Modifier = Modifier,
     selectedCharacterTab: Int,
     selectedPlayerCharacterTab: Int,
     selectedNonPlayerCharacterTab: Int,
@@ -56,7 +57,7 @@ fun CharacterNavigation(
             modifier = Modifier.padding(16.dp)
         )
     },
-    modifier: Modifier = Modifier
+
 
 ) {
 
