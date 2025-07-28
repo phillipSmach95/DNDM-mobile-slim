@@ -24,9 +24,12 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.dndmanagerslim.components.character.npc.CharacterNavigation
 import com.example.dndmanagerslim.data.Character
 import com.example.dndmanagerslim.data.Stats
 import com.example.dndmanagerslim.viewmodel.CharacterViewModel
+
+
 
 @Composable
 fun CharacterViewScreen(viewModel: CharacterViewModel) {
@@ -34,34 +37,51 @@ fun CharacterViewScreen(viewModel: CharacterViewModel) {
 
     // Collect the characters state from the ViewModel
     val characters by viewModel.characters.collectAsState()
+    val selectedCharacterTab by viewModel.selectedCharacterTab.collectAsState()
+    val selectedPlayerCharacterTab by viewModel.selectedPlayerCharacterTab.collectAsState()
+    val selectedNonPlayerCharacterTab by viewModel.selectedNonPlayerCharacterTab.collectAsState()
     // Collect the characters with modifiers
 
-    if (characters.isEmpty()) {
-        // Display a message if there are no characters
-        Text(
-            text = "No characters found",
-            style = MaterialTheme.typography.bodyLarge,
-        )
+    CharacterNavigation(
+        selectedCharacterTab = selectedCharacterTab,
+        selectedPlayerCharacterTab = selectedPlayerCharacterTab,
+        selectedNonPlayerCharacterTab = selectedNonPlayerCharacterTab,
+        handleCharacterTabClick = { viewModel.handleCharacterTabClick(it) },
+        handlePlayerCharacterTabs = { viewModel.handlePlayerCharacterTabs(it) },
+        handleNonPlayerCharacterTabs = { viewModel.handleNonPlayerCharacterTabs(it) },
+        characterOverview = {
+            if (characters.isEmpty()) {
+                // Display a message if there are no characters
+                Text(
+                    text = "No characters found",
+                    style = MaterialTheme.typography.bodyLarge,
+                )
 
-    } else {
-        // Display the list of characters
-        Box() {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(1),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth().padding(10.dp)
-            ) {
-                items(characters.size) { index ->
-                    CharacterItem(
-                        character = characters[index],
-                        modifier = Modifier,
-                        getStatModifier = viewModel::getModifier
-                    )
+            } else {
+                // Display the list of characters
+                Box {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(1),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp)
+                    ) {
+                        items(characters.size) { index ->
+                            CharacterItem(
+                                character = characters[index],
+                                modifier = Modifier,
+                                getStatModifier = viewModel::getModifier
+                            )
+                        }
+                    }
                 }
             }
         }
-    }
+
+    )
+
     // Display the list of characters
 
 }
@@ -84,13 +104,17 @@ fun CharacterItem(character: Character, modifier: Modifier = Modifier , getStatM
             containerColor = MaterialTheme.colorScheme.surfaceContainer,
             contentColor = MaterialTheme.colorScheme.onSecondaryContainer
         ),
-        modifier = modifier.fillMaxWidth().padding(10.dp)
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(10.dp)
 
     ) {
         Column (
-            modifier = modifier.fillMaxSize().padding(8.dp),
+            modifier = modifier
+                .fillMaxSize()
+                .padding(8.dp),
             verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = CenterHorizontally
         ) {
 
 
@@ -100,7 +124,9 @@ fun CharacterItem(character: Character, modifier: Modifier = Modifier , getStatM
 
                 )
             Row(
-                modifier = modifier.fillMaxSize().padding(16.dp),
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -122,7 +148,9 @@ fun CharacterItem(character: Character, modifier: Modifier = Modifier , getStatM
             modifier = modifier.padding(vertical = 8.dp),
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
         )
-        StatsDisplay(stats = character.stats, modifier = modifier.fillMaxWidth().padding(4.dp), getSateModifier = getStatModifier)
+        StatsDisplay(stats = character.stats, modifier = modifier
+            .fillMaxWidth()
+            .padding(4.dp), getSateModifier = getStatModifier)
 
     }
 

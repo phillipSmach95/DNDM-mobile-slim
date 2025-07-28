@@ -17,6 +17,14 @@ class CharacterViewModel(private val repository: DndRepository) : ViewModel() {
     val characters: StateFlow<List<Character>> = _characters.asStateFlow()
     private val _character = MutableStateFlow<Character?>(null)
     val character: StateFlow<Character?> = _character.asStateFlow()
+    private val _selectedCharacterTab = MutableStateFlow(0)
+    val selectedCharacterTab: StateFlow<Int> = _selectedCharacterTab.asStateFlow()
+    private val _selectedPlayerCharacterTab = MutableStateFlow(0)
+    val selectedPlayerCharacterTab: StateFlow<Int> = _selectedPlayerCharacterTab.asStateFlow()
+    private val _selectedNonPlayerCharacterTab = MutableStateFlow(0)
+    val selectedNonPlayerCharacterTab: StateFlow<Int> = _selectedNonPlayerCharacterTab.asStateFlow()
+
+
 
     init {
         fetchCharacters()
@@ -35,6 +43,19 @@ class CharacterViewModel(private val repository: DndRepository) : ViewModel() {
             }
         }
     }
+    fun handleCharacterTabClick(tabIndex: Int) {
+        _selectedCharacterTab.value = tabIndex
+        Log.d("CharacterViewModel", "Selected character tab: $tabIndex")
+    }
+    fun handlePlayerCharacterTabs(tabIndex: Int) {
+        _selectedPlayerCharacterTab.value = tabIndex
+        Log.d("CharacterViewModel", "Selected player character tab: $tabIndex")
+    }
+    fun handleNonPlayerCharacterTabs(tabIndex: Int) {
+        _selectedNonPlayerCharacterTab.value = tabIndex
+        Log.d("CharacterViewModel", "Selected non-player character tab: $tabIndex")
+    }
+
     fun getModifier(stat: Int): String {
         return when {
             stat >= 20 -> "+5"
