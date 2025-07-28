@@ -1,5 +1,6 @@
 package com.example.dndmanagerslim.view
 
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
@@ -7,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.dndmanagerslim.data.SessionData
 import com.example.dndmanagerslim.viewmodel.SessionViewModel
@@ -27,17 +29,17 @@ fun SessionViewScreen(
 fun SessionItem(
     sessions: SessionData
 ) {
-    LazyColumn {
+    LazyColumn (modifier = Modifier.padding(16.dp).height(400.dp)) {
         item {
             Text(
                 text = sessions.notes,
                 style = MaterialTheme.typography.headlineSmall,
-                modifier = androidx.compose.ui.Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp)
             )
             Text(
                 text = sessions.date.toString(),
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = androidx.compose.ui.Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp)
             )
         }
     }

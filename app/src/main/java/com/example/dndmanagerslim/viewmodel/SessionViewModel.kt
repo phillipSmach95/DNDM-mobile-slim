@@ -21,7 +21,7 @@ class SessionViewModel(
         fetchSessions()
     }
 
-    private fun fetchSessions() {
+    fun fetchSessions() {
         viewModelScope.launch {
             try {
                 val result = repository.getSessions()

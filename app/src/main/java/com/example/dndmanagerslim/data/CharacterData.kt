@@ -1,13 +1,20 @@
 package com.example.dndmanagerslim.data
 
+import com.google.gson.annotations.SerializedName
+
+data class CharacterListResponse(
+    @SerializedName("characters") val characters: List<Character>
+)
+
 data class Character(
-    val id: String,
+    @SerializedName("_id") val id: String,
     val name: String,
     val `class`: String,
     val level: Int,
     val stats: Stats,
-    val hitPoints: Int,
-    val equipment: List<String>,
+    @SerializedName("hit_points") val hitPoints: Int,
+    val inventory: List<String> = emptyList(),
+    val equipment: List<String> = emptyList(),
     val skills: Skills,
     val spells: List<Spell>
 )
@@ -19,12 +26,6 @@ data class Stats(
     val intelligence: Int,
     val wisdom: Int,
     val charisma: Int,
-    val strengthModifier: Int = calculateModifier(strength),
-    val dexterityModifier: Int = calculateModifier(dexterity),
-    val constitutionModifier: Int = calculateModifier(constitution),
-    val intelligenceModifier: Int = calculateModifier(intelligence),
-    val wisdomModifier: Int = calculateModifier(wisdom),
-    val charismaModifier: Int = calculateModifier(charisma)
 )
 
 data class Skills(
@@ -32,18 +33,20 @@ data class Skills(
     val acrobatics: Int,
     val stealth: Int,
     val perception: Int,
-    val survival: Int,
-    val investigation: Int,
-    val history: Int,
-    val arcana: Int,
     val insight: Int,
-    val deception: Int,
-    val intimidation: Int,
-    val performance: Int,
     val persuasion: Int,
-    val religion: Int,
+    val performance: Int,
+    val intimidation: Int,
+    val arcana: Int,
+    val history: Int,
     val nature: Int,
-    val medicine: Int
+    val religion: Int,
+    val medicine: Int,
+    val survival: Int,
+    val deception: Int,
+    @SerializedName("sleight_of_hand") val sleightOfHand: Int,
+    @SerializedName("investigation") val investigation: Int,
+    @SerializedName("animal_handling") val animalHandling: Int
 )
 
 data class Spell(

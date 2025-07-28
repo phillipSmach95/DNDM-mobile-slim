@@ -2,6 +2,7 @@ package com.example.dndmanagerslim.repository
 
 import com.example.dndmanagerslim.data.ApiService
 import com.example.dndmanagerslim.data.Character
+import com.example.dndmanagerslim.data.CharacterListResponse
 import com.example.dndmanagerslim.data.NpcData
 import com.example.dndmanagerslim.data.PlacesData
 import com.example.dndmanagerslim.data.QuestData
@@ -10,7 +11,7 @@ import com.example.dndmanagerslim.data.SessionData
 class DndRepository(private val apiService: ApiService) {
 
     // Character Management Functions
-    suspend fun getCharacters(): List<Character> {
+    suspend fun getCharacters(): CharacterListResponse {
         return apiService.getCharacters()
     }
     suspend fun getCharacterById(id: String): Character {

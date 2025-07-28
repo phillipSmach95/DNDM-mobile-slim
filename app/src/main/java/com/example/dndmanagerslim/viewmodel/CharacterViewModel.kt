@@ -1,5 +1,6 @@
 package com.example.dndmanagerslim.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dndmanagerslim.data.Character
@@ -23,12 +24,14 @@ class CharacterViewModel(private val repository: DndRepository) : ViewModel() {
     fun fetchCharacters() {
         viewModelScope.launch {
             try {
-                val result = repository.getCharacters()
+                val result = repository.getCharacters().characters
                 _characters.value = result
 
             } catch (e: Exception) {
                 // Fehlerbehandlung
+
                 e.printStackTrace()
+                Log.e("CharacterViewModel", "Error fetching characters: ${e.message}")
             }
         }
     }

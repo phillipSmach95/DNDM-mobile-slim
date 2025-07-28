@@ -21,7 +21,7 @@ class PlaceViewModel(
         fetchPlaces()
     }
 
-    private fun fetchPlaces() {
+    fun fetchPlaces() {
         viewModelScope.launch {
             try {
                 val result = repository.getPlaces()

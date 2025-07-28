@@ -2,6 +2,7 @@ package com.example.dndmanagerslim.view
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
@@ -25,7 +26,7 @@ fun QuestViewScreen(
 ) {
    val quests by viewModel.questList.collectAsState()
 
-    LazyColumn {
+    LazyColumn (modifier = Modifier.padding(16.dp).height(400.dp)) {
         items(quests.size) { index ->
             QuestItem(quest = quests[index])
         }

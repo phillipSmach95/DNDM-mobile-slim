@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.dndmanagerslim"
-        minSdk = 26
+        minSdk = 33
 
         versionCode = 1
         versionName = "1.0"

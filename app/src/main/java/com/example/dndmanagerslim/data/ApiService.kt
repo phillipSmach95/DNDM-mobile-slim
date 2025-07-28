@@ -7,7 +7,7 @@ interface ApiService {
 
     // Characters endpoints
     @GET("mongodb/characters")
-    suspend fun getCharacters(): List<Character>
+    suspend fun getCharacters(): CharacterListResponse
     @GET("mongodb/characters/{id}")
     suspend fun getCharacterById(@Path("id") id: String): Character
     @POST("mongodb/character")
