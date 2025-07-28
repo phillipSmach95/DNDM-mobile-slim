@@ -12,7 +12,9 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -30,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -69,66 +72,47 @@ fun Navigation(
     Scaffold(
 
         modifier = Modifier.statusBarsPadding(),
-
+        topBar = {
+            AppTopBar(
+                currentScreen = currentScreen,
+                canNavigateBack = navController.previousBackStackEntry != null,
+                showMenu = menuExpanded,
+                navigateUp = { navController.navigateUp() },
+                navigateHome = { navController.navigate(NavigationDestination.HOME.name) },
+                handleToggleMenu = { appViewModel.handleMenuClick() }
+            )
+        },
         ) { padding ->
 
         Row {
 
 
-            NavigationRail(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier.padding(padding),
-
-
+            if (menuExpanded) {
+                NavigationRail(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.padding(padding),
                 ) {
-                NavigationDestination.entries.forEach { screen ->
-                    // Exclude the HOME screen from the NavigationRail
-                    // to avoid redundancy with the top bar navigation
-                    // and to keep the UI clean.
-                    // This allows the HOME screen to be accessible only via the top bar.
+                    NavigationDestination.entries.forEach { screen ->
 
+                        if (screen != NavigationDestination.HOME) {
+                            NavigationRailItem(
+                                selected = currentScreen == screen,
 
-                    NavigationRailItem(
-                        selected = currentScreen == screen,
-
-                        onClick = { navController.navigate(screen.name) },
-                        icon = {
-                            Icon(
-                                imageVector = screen.icon,
-                                contentDescription = stringResource(id = screen.num)
+                                onClick = { navController.navigate(screen.name) },
+                                icon = {
+                                    Icon(
+                                        imageVector = screen.icon,
+                                        contentDescription = stringResource(id = screen.num)
+                                    )
+                                },
+                                label = { Text(text = stringResource(id = screen.num)) },
                             )
-                        },
-                        label = { Text(text = stringResource(id = screen.num)) }
-                    )
-                }
+                        }
+                    }
 
+                }
             }
-            Column (
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
-                modifier = Modifier
-
-                    .padding(padding)
-                    .fillMaxWidth(),
-
-            ) {
-
-                Row (
-                    modifier = Modifier
-                    .padding(padding).fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.secondaryContainer),
-                ) {
-                    Text(
-                        text = stringResource(id = currentScreen.num),
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                       textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                        modifier = Modifier.padding(16.dp)
-
-
-                    )
-                }
 
 
                 NavHost(
@@ -152,7 +136,7 @@ fun Navigation(
                         QuestViewScreen(viewModel = questViewModel)
                     }
                 }
-            }
+
         }
 
     }
@@ -166,22 +150,63 @@ fun AppTopBar(
     showMenu: Boolean,
     navigateUp: () -> Unit,
     navigateHome: () -> Unit,
+    handleToggleMenu: () -> Unit
 
 
     ) {
     TopAppBar(
         title = {
-            Text(text = stringResource(id = currentScreen.num))
-        },
-        navigationIcon = {
+            Text(
+                text = stringResource(id = currentScreen.num).uppercase(),
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onPrimary,
+                textAlign = TextAlign.Center,
 
+            )
+        },
+        actions = {
             if (canNavigateBack) {
-                IconButton(onClick = navigateUp) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                IconButton(
+                    onClick = navigateUp,
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back"
+                    )
                 }
             } else {
-                IconButton(onClick = navigateHome) {
-                    Icon(Icons.Outlined.Home, contentDescription = "Home")
+                IconButton(
+                    onClick = navigateHome,
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Home,
+                        contentDescription = stringResource(id = NavigationDestination.HOME.num)
+                    )
+                }
+            }
+        },
+        navigationIcon = {
+            if (!showMenu) {
+                IconButton(
+                    onClick = { handleToggleMenu() },
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Menu,
+                        contentDescription = stringResource(id = NavigationDestination.HOME.num)
+                    )
+                }
+            } else {
+                IconButton(
+                    onClick = { handleToggleMenu() },
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Close,
+                        contentDescription = "Close Menu"
+                    )
                 }
             }
         },
