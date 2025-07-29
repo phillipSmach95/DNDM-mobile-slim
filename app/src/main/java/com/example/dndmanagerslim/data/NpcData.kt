@@ -1,26 +1,32 @@
 package com.example.dndmanagerslim.data
+import com.google.gson.annotations.SerializedName
 import java.util.Date
 
 data class NpcData(
-    val npc_id: String, // eindeutige ID für den NPC
-    val name: String,
-    val description: String,
-    val appearance: String,
-    val personality_Traits: String,
-    val backstory: String,
-    val status: Stats,
-    val role: String,
-    val current_quests: List<String> = emptyList(), // Liste von Quest-IDs, die dem NPC zugeordnet sind
-    val relationships: List<Relationship> = emptyList(), // Liste von Beziehungen zu anderen NPCs oder Charakteren
-    val current_location: String, // Aktuelle Position des NPCs
-    val lastSeen: Date, // Letzter bekannter Aufenthaltsort oder Zeitstempel
-    val AdditionalInfo: String // Zusätzliche Informationen oder Notizen über den NPC
+    @SerializedName("npc_id") val id: String = "",
+    val name: String = "",
+    val description: String = "",
+    val appearance: String = "",
+    @SerializedName("personality_traits") val personalityTraits: String = "",
+    val backstory: String = "",
+    val status: Stats = Stats(
+        strength = 10,
+        dexterity = 10,
+        constitution = 10,
+        intelligence = 10,
+        wisdom = 10,
+        charisma = 10
+    ),
+    val role: String = "",
+   @SerializedName("current_quests") val currentQuests: List<String> = emptyList(),
+    val relationships: List<Relationship> = emptyList(),
+    @SerializedName("current_location") val currentLocation: String = "",
+    val lastSeen: Date = Date(),
+    @SerializedName("AdditionalInfo") val additionalInfo: String = ""
 )
 
 data class Relationship (
-    val character_id: String, // ID des Charakteres, dem die Beziehung gehört
-    val relationship_type: String, // Art der Beziehung (z.B. Freund, Feind, Verbündeter)
-    val notes: String // Beschreibung der Beziehung
+    @SerializedName("character_id") val npcId: String = "",
+    @SerializedName("relationship_type") val relationshipType: String = "",
+    val notes: String = ""
 )
-
-

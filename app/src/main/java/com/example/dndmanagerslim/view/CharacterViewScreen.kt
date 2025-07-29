@@ -33,24 +33,18 @@ import com.example.dndmanagerslim.viewmodel.CharacterViewModel
 
 @Composable
 fun CharacterViewScreen(viewModel: CharacterViewModel) {
-    // Fetch characters when the screen is first composed
-
-    // Collect the characters state from the ViewModel
-    val characters by viewModel.characters.collectAsState()
-    val selectedCharacterTab by viewModel.selectedCharacterTab.collectAsState()
-    val selectedPlayerCharacterTab by viewModel.selectedPlayerCharacterTab.collectAsState()
-    val selectedNonPlayerCharacterTab by viewModel.selectedNonPlayerCharacterTab.collectAsState()
-    // Collect the characters with modifiers
+    // Collect the UI state from the ViewModel
+    val uiState by viewModel.uiState.collectAsState()
 
     CharacterNavigation(
-        selectedCharacterTab = selectedCharacterTab,
-        selectedPlayerCharacterTab = selectedPlayerCharacterTab,
-        selectedNonPlayerCharacterTab = selectedNonPlayerCharacterTab,
+        selectedCharacterTab = uiState.selectedCharacterTab,
+        selectedPlayerCharacterTab = uiState.selectedPlayerCharacterTab,
+        selectedNonPlayerCharacterTab = uiState.selectedNonPlayerCharacterTab,
         handleCharacterTabClick = { viewModel.handleCharacterTabClick(it) },
         handlePlayerCharacterTabs = { viewModel.handlePlayerCharacterTabs(it) },
         handleNonPlayerCharacterTabs = { viewModel.handleNonPlayerCharacterTabs(it) },
         characterOverview = {
-            if (characters.isEmpty()) {
+            if (uiState.characters.isEmpty()) {
                 // Display a message if there are no characters
                 Text(
                     text = "No characters found",
@@ -68,9 +62,9 @@ fun CharacterViewScreen(viewModel: CharacterViewModel) {
                             .fillMaxWidth()
                             .padding(10.dp)
                     ) {
-                        items(characters.size) { index ->
+                        items(uiState.characters.size) { index ->
                             CharacterItem(
-                                character = characters[index],
+                                character = uiState.characters[index],
                                 modifier = Modifier,
                                 getStatModifier = viewModel::getModifier
                             )
@@ -78,11 +72,17 @@ fun CharacterViewScreen(viewModel: CharacterViewModel) {
                     }
                 }
             }
-        }
+        },
+        onSearch = { query ->
+            viewModel.onSearch(query)
+
+        },
+        onQueryChange = { query ->
+            viewModel.handleQueryChange(query)
+        },
+        characterList = uiState.filteredCharacters,
 
     )
-
-    // Display the list of characters
 
 }
 

@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.dndmanagerslim.data.Character
 
 enum class CharacterTabs(val index: Int, val title: String) {
     PlayerCharacters(0, "Player Characters"),
@@ -57,6 +58,9 @@ fun CharacterNavigation(
             modifier = Modifier.padding(16.dp)
         )
     },
+    onSearch: (String) -> Unit,
+    onQueryChange: (String) -> Unit ,
+    characterList: List<Character>,
 
 
 ) {
@@ -77,7 +81,10 @@ fun CharacterNavigation(
                     PlayerCharacterScreen(
                         selectedPlayerCharacterTab,
                         handlePlayerCharacterTabs,
-                        characterOverview
+                        characterOverview,
+                        onSearch = onSearch,
+                        onQueryChange = onQueryChange,
+                        characterList = characterList,
                     )
                 }
                 CharacterTabs.NonPlayerCharacters.index -> {
@@ -129,8 +136,19 @@ fun NonPlayerCharacterScreen(
 fun PlayerCharacterScreen(
     selectedPlayerCharacterTab: Int,
     handlePlayerCharacterTabs: (Int) -> Unit,
-    characterOverview: @Composable () -> Unit
+    characterOverview: @Composable () -> Unit,
+    query: String = "",
+    onSearch: (String) -> Unit ,
+    onQueryChange: (String) -> Unit ,
+    characterList: List<Character> ,
 ) {
+
+    CharacterTable(
+        query = query,
+        onSearch = onSearch,
+        onQueryChange = onQueryChange,
+        characterList = characterList,
+    )
     PlayerCharacterTabsRow(
         selectedTab = selectedPlayerCharacterTab, // Placeholder for selected tab
         handlePlayerCharacterTabs = handlePlayerCharacterTabs,
@@ -227,6 +245,10 @@ fun CharacterNavigationPreview() {
     val handleNonPlayerCharacterTabs: (Int) -> Unit = {
         selectedNonPlayerCharacterTab = it
     }
+    val onQueryChange: (String) -> Unit = {}
+    val onSearch: (String) -> Unit = {}
+    val characterList = listOf<Character>() // Placeholder for character list
+
 
     CharacterNavigation(
         selectedCharacterTab = CharacterTabs.PlayerCharacters.index,
@@ -235,5 +257,8 @@ fun CharacterNavigationPreview() {
         handleCharacterTabClick = handleCharacterTabClick,
         handlePlayerCharacterTabs = handlePlayerCharacterTabs,
         handleNonPlayerCharacterTabs = handleNonPlayerCharacterTabs,
+        onQueryChange = onQueryChange,
+        onSearch = onSearch,
+        characterList = characterList,
     )
 }

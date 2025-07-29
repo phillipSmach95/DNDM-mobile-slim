@@ -1,23 +1,50 @@
 package com.example.dndmanagerslim.components.character
 
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import org.w3c.dom.CharacterData
+import androidx.compose.ui.unit.dp
+import com.example.dndmanagerslim.components.AppDefaultSearchBar
+import com.example.dndmanagerslim.data.Character
+
 
 @Composable
 fun CharacterTable(
     modifier: Modifier = Modifier,
-    characterList: List<CharacterData>,
-    selectedCharacter: CharacterData,
+    characterList: List<Character>,
+    query: String = "",
+    onSearch: (String) -> Unit,
+    onQueryChange: (String) -> Unit
+
 ) {
-    // This is a placeholder for the character table UI component.
-    // You can implement the UI using Compose components like LazyColumn, Text, etc.
-    // For example:
-    /*
-    LazyColumn {
-        items(characterList) { character ->
-            Text(text = character.name)
-        }
-    }
-    */
+   AppDefaultSearchBar(
+       modifier = modifier,
+       query = query,
+       onSearch = onSearch,
+       placeholder = {
+           Text(
+                text = "Search Characters",
+                modifier = Modifier
+                     .fillMaxWidth()
+                     .padding(16.dp)
+           )
+       },
+       onQueryChange = onQueryChange,
+       searchResults = {
+              // Display the list of characters
+              characterList.forEach { character ->
+                    Text(
+                        text = character.name, // Assuming CharacterData has a 'name' property
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    )
+              }
+
+       }
+
+   )
 }
+

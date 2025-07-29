@@ -4,7 +4,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dndmanagerslim.data.Character
+import com.example.dndmanagerslim.data.NpcData
 import com.example.dndmanagerslim.repository.DndRepository
+import com.example.dndmanagerslim.ui.CharacterUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,19 +15,8 @@ import kotlinx.coroutines.launch
 
 class CharacterViewModel(private val repository: DndRepository) : ViewModel() {
 
-    private val _characters = MutableStateFlow<List<Character>>(emptyList())
-    val characters: StateFlow<List<Character>> = _characters.asStateFlow()
-    private val _character = MutableStateFlow<Character?>(null)
-    val character: StateFlow<Character?> = _character.asStateFlow()
-    private val _selectedCharacterTab = MutableStateFlow(0)
-    val selectedCharacterTab: StateFlow<Int> = _selectedCharacterTab.asStateFlow()
-    private val _selectedPlayerCharacterTab = MutableStateFlow(0)
-    val selectedPlayerCharacterTab: StateFlow<Int> = _selectedPlayerCharacterTab.asStateFlow()
-    private val _selectedNonPlayerCharacterTab = MutableStateFlow(0)
-    val selectedNonPlayerCharacterTab: StateFlow<Int> = _selectedNonPlayerCharacterTab.asStateFlow()
-
-
-
+    private val _uiState = MutableStateFlow(CharacterUiState())
+    val uiState: StateFlow<CharacterUiState> = _uiState.asStateFlow()
     init {
         fetchCharacters()
     }
@@ -33,7 +24,15 @@ class CharacterViewModel(private val repository: DndRepository) : ViewModel() {
         viewModelScope.launch {
             try {
                 val result = repository.getCharacters().characters
-                _characters.value = result
+                _uiState.value = _uiState.value.copy(
+                    characters = result,
+                    filteredCharacters = result // Initialize filtered characters with all characters
+                )
+                val npcResult = repository.getNpcs()
+                _uiState.value = _uiState.value.copy(
+                    npcCharacters = npcResult,
+                    filteredNpcCharacters = npcResult // Initialize filtered NPCs with all NPCs
+                )
 
             } catch (e: Exception) {
                 // Fehlerbehandlung
@@ -43,19 +42,46 @@ class CharacterViewModel(private val repository: DndRepository) : ViewModel() {
             }
         }
     }
+    // handle tab clicks
     fun handleCharacterTabClick(tabIndex: Int) {
-        _selectedCharacterTab.value = tabIndex
+        _uiState.value = _uiState.value.copy(selectedCharacterTab = tabIndex)
         Log.d("CharacterViewModel", "Selected character tab: $tabIndex")
     }
     fun handlePlayerCharacterTabs(tabIndex: Int) {
-        _selectedPlayerCharacterTab.value = tabIndex
+        _uiState.value = _uiState.value.copy(selectedPlayerCharacterTab = tabIndex)
         Log.d("CharacterViewModel", "Selected player character tab: $tabIndex")
     }
     fun handleNonPlayerCharacterTabs(tabIndex: Int) {
-        _selectedNonPlayerCharacterTab.value = tabIndex
+        _uiState.value = _uiState.value.copy(selectedNonPlayerCharacterTab = tabIndex)
         Log.d("CharacterViewModel", "Selected non-player character tab: $tabIndex")
     }
+    // Search-Functions
+    fun onSearch(query: String) {
+        Log.d("CharacterViewModel", "Search query: $query")
+        if (query.isEmpty()) {
+            _uiState.value = _uiState.value.copy(filteredCharacters = _uiState.value.characters)
+        } else {
+            val filtered = _uiState.value.characters.filter { it.name.contains(query, ignoreCase = true) }
+            _uiState.value = _uiState.value.copy(filteredCharacters = filtered)
+        }
+        Log.d("CharacterViewModel", "Filtered characters: ${_uiState.value.filteredCharacters.size}")
+    }
+    fun handleQueryChange(query: String) {
 
+        _uiState.value = _uiState.value.copy(searchQuery = query)
+        Log.d("CharacterViewModel", "Search query changed: $query")
+    }
+    fun setCharacter(character: Character) {
+        _uiState.value = _uiState.value.copy(selectedCharacter = character)
+        Log.d("CharacterViewModel", "Selected character: ${character.name}")
+    }
+    fun setNpcCharacter(npc: NpcData) {
+        _uiState.value = _uiState.value.copy(selectedNpcCharacter = npc)
+        Log.d("CharacterViewModel", "Selected NPC character: ${npc.name}")
+    }
+
+
+    // utility functions
     fun getModifier(stat: Int): String {
         return when {
             stat >= 20 -> "+5"
@@ -70,5 +96,21 @@ class CharacterViewModel(private val repository: DndRepository) : ViewModel() {
             stat >= 2 -> "-4"
             else -> "-5" // Für Werte unter 1
         }
+    }
+    fun setEmptyCharacter() {
+        _uiState.value = _uiState.value.copy(selectedCharacter = Character())
+        Log.d("CharacterViewModel", "Set empty character")
+    }
+
+    fun setLoading(isLoading: Boolean) {
+        _uiState.value = _uiState.value.copy(isLoading = isLoading)
+    }
+
+    fun setSearchQuery(query: String) {
+        _uiState.value = _uiState.value.copy(searchQuery = query)
+    }
+
+    fun setError(message: String) {
+        _uiState.value = _uiState.value.copy(errorMessage = message)
     }
 }
