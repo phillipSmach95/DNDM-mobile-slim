@@ -1,19 +1,22 @@
 package com.example.dndmanagerslim.view
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Label
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,7 +32,10 @@ import com.example.dndmanagerslim.data.Stats
 import com.example.dndmanagerslim.viewmodel.CharacterViewModel
 
 @Composable
-fun CharacterViewScreen(viewModel: CharacterViewModel) {
+fun CharacterViewScreen(
+    modifier: Modifier,
+    viewModel: CharacterViewModel
+) {
     // Fetch characters when the screen is first composed
 
     // Collect the characters state from the ViewModel
@@ -45,25 +51,112 @@ fun CharacterViewScreen(viewModel: CharacterViewModel) {
 
     } else {
         // Display the list of characters
-        Box() {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(1),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth().padding(10.dp)
-            ) {
-                items(characters.size) { index ->
-                    CharacterItem(
-                        character = characters[index],
-                        modifier = Modifier,
-                        getStatModifier = viewModel::getModifier
-                    )
-                }
-            }
+        Column(modifier = modifier) {
+//            LazyVerticalGrid(
+//                columns = GridCells.Fixed(1),
+//                verticalArrangement = Arrangement.spacedBy(8.dp),
+//                horizontalArrangement = Arrangement.spacedBy(8.dp),
+//                modifier = modifier.fillMaxWidth()
+//            ) {
+//                items(characters.size) { index ->
+//                    CharacterItem(
+//                        character = characters[index],
+//                        modifier = modifier,
+//                        getStatModifier = { viewModel.getModifier(it)}
+//                    )
+//                }
+//            }
+            CharacterList(
+                modifier = modifier,
+                items = characters,
+                getStatModifier = { viewModel.getModifier(it) }
+            )
         }
     }
     // Display the list of characters
 
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CharacterList(
+    modifier: Modifier = Modifier,
+    items: List<Character> = emptyList(),
+    getStatModifier: (Int) -> String
+) {
+
+    LazyColumn {
+        items(items.size) { index ->
+            ListItem(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(6.dp),
+                colors = ListItemDefaults.colors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    headlineColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    supportingColor = MaterialTheme.colorScheme.onSurface,
+
+                    ),
+
+                headlineContent = {
+                    Text(
+                        modifier = modifier.padding(8.dp),
+                        text = items[index].name,
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                },
+                supportingContent = {
+                    Column(
+                        modifier = modifier
+                            .padding(8.dp),
+                        Arrangement.SpaceBetween,
+                        Alignment.End
+                    ) {
+                        Label(
+                            label = {
+                                Text(
+                                    text = "Class: ",
+                                    style = MaterialTheme.typography.labelLarge,
+                                    modifier = Modifier.padding(2.dp)
+                                )
+                            },
+                            content = {
+                                Text(
+                                    text = items[index].`class`,
+                                    style = MaterialTheme.typography.labelLarge
+                                )
+                            },
+                            isPersistent = true
+                        )
+                        Label(
+                            label = {
+                                Text(
+                                    text = "Level: ",
+                                    style = MaterialTheme.typography.labelLarge,
+                                    modifier = Modifier.padding(2.dp)
+                                )
+                            },
+                            content = {
+                                Text(
+                                    text = items[index].level.toString(),
+                                    style = MaterialTheme.typography.labelLarge
+                                )
+                            },
+                            isPersistent = true
+                        )
+
+                    }
+
+                },
+
+                )
+        }
+    }
+    Text(
+        text = "Character List",
+        style = MaterialTheme.typography.headlineSmall,
+        modifier = Modifier.padding(16.dp)
+    )
 }
 
 @Composable
@@ -84,13 +177,17 @@ fun CharacterItem(character: Character, modifier: Modifier = Modifier , getStatM
             containerColor = MaterialTheme.colorScheme.surfaceContainer,
             contentColor = MaterialTheme.colorScheme.onSecondaryContainer
         ),
-        modifier = modifier.fillMaxWidth().padding(10.dp)
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(10.dp)
 
     ) {
         Column (
-            modifier = modifier.fillMaxSize().padding(8.dp),
+            modifier = modifier
+                .fillMaxSize()
+                .padding(8.dp),
             verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = CenterHorizontally
         ) {
 
 
@@ -100,7 +197,9 @@ fun CharacterItem(character: Character, modifier: Modifier = Modifier , getStatM
 
                 )
             Row(
-                modifier = modifier.fillMaxSize().padding(16.dp),
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -122,7 +221,11 @@ fun CharacterItem(character: Character, modifier: Modifier = Modifier , getStatM
             modifier = modifier.padding(vertical = 8.dp),
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
         )
-        StatsDisplay(stats = character.stats, modifier = modifier.fillMaxWidth().padding(4.dp), getSateModifier = getStatModifier)
+        StatsDisplay(
+            stats = character.stats, modifier = modifier
+                .fillMaxWidth()
+                .padding(4.dp), getSateModifier = getStatModifier
+        )
 
     }
 

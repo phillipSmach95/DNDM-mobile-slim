@@ -15,21 +15,26 @@ import com.example.dndmanagerslim.viewmodel.SessionViewModel
 
 @Composable
 fun SessionViewScreen(
+    modifier: Modifier,
     viewModel: SessionViewModel
 ) {
    val sessions by viewModel.sessions.collectAsState()
 
     LazyColumn {
         items(sessions.size) { index ->
-            SessionItem(sessions = sessions[index])
+            SessionItem(
+                modifier = modifier,
+                sessions = sessions[index]
+            )
         }
     }
 }
 @Composable
 fun SessionItem(
+    modifier: Modifier,
     sessions: SessionData
 ) {
-    LazyColumn (modifier = Modifier.padding(16.dp).height(400.dp)) {
+    LazyColumn (modifier = modifier.padding(16.dp).height(400.dp)) {
         item {
             Text(
                 text = sessions.notes,

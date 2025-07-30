@@ -16,6 +16,7 @@ import com.example.dndmanagerslim.viewmodel.PlaceViewModel
 
 @Composable
 fun PlaceViewScreen(
+    modifier: Modifier,
     viewModel: PlaceViewModel
 ) {
     val places by viewModel.places.collectAsState()
@@ -25,23 +26,26 @@ fun PlaceViewScreen(
         Text(
             text = "No places found",
             style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(16.dp)
+            modifier = modifier.padding(16.dp)
         )
         return
     }
-    LazyColumn (modifier = Modifier.padding(16.dp).height(400.dp)) {
+    LazyColumn (modifier = modifier.padding(16.dp).height(400.dp)) {
         items(places.size) { index ->
-            PlaceItem(place = places[index])
+            PlaceItem(modifier = modifier, place = places[index])
         }
     }
 }
 
 @Composable
-fun PlaceItem(place: PlacesData) {
+fun PlaceItem(
+    modifier: Modifier,
+    place: PlacesData
+) {
     Text(
         text = place.name,
         style = MaterialTheme.typography.bodyLarge,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(16.dp)
     )

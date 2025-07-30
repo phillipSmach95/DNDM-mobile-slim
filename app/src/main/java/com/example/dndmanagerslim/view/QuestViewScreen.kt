@@ -22,29 +22,33 @@ import com.example.dndmanagerslim.viewmodel.QuestViewModel
 
 @Composable
 fun QuestViewScreen(
+    modifier: Modifier ,
     viewModel: QuestViewModel
 ) {
    val quests by viewModel.questList.collectAsState()
 
-    LazyColumn (modifier = Modifier.padding(16.dp).height(400.dp)) {
+    LazyColumn (modifier = modifier) {
         items(quests.size) { index ->
-            QuestItem(quest = quests[index])
+            QuestItem(
+                modifier = modifier,
+                quest = quests[index])
         }
     }
 }
 
 @Composable
 fun QuestItem(
+    modifier: Modifier = Modifier,
     quest: QuestData
 ) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(8.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = modifier.padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
@@ -52,7 +56,7 @@ fun QuestItem(
                 style = MaterialTheme.typography.headlineSmall,
                 textAlign = TextAlign.Center
             )
-            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+            HorizontalDivider(modifier = modifier.padding(vertical = 8.dp))
             Text(
                 text = quest.description,
                 style = MaterialTheme.typography.bodyLarge,

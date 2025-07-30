@@ -1,12 +1,10 @@
 package com.example.dndmanagerslim.view
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
@@ -14,23 +12,24 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationRail
-import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -53,6 +52,7 @@ enum class NavigationDestination(val num: Int, val icon: ImageVector) {
 
 @Composable
 fun Navigation(
+    modifier: Modifier,
     characterViewModel: CharacterViewModel,
     sessionViewModel: SessionViewModel,
     placeViewModel: PlaceViewModel,
@@ -68,88 +68,61 @@ fun Navigation(
     val menuExpanded by appViewModel.menuExpanded.collectAsState()
     Scaffold(
 
-        modifier = Modifier.statusBarsPadding(),
+        modifier = modifier,
+        bottomBar = {
+            AppBottomBar(
+                modifier = modifier,
+                currentScreen = currentScreen,
+                canNavigateBack = navController.previousBackStackEntry != null,
+                showMenu = menuExpanded,
+                navigateUp = { navController.navigateUp() },
+                navigateHome = { navController.navigate(NavigationDestination.HOME.name) },
+                navigateTo = { destination: NavigationDestination ->
+                    navController.navigate(destination.name)
+                }
+            )
+        },
+        topBar = {
+            AppTopBar(
+                modifier = modifier,
+                currentScreen = currentScreen,
+                canNavigateBack = navController.previousBackStackEntry != null,
+                showMenu = menuExpanded,
+                navigateUp = { navController.navigateUp() },
+                navigateHome = { navController.navigate(NavigationDestination.HOME.name) }
+            )
+        }
 
         ) { padding ->
 
         Row {
-
-
-            NavigationRail(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier.padding(padding),
-
-
-                ) {
-                NavigationDestination.entries.forEach { screen ->
-                    // Exclude the HOME screen from the NavigationRail
-                    // to avoid redundancy with the top bar navigation
-                    // and to keep the UI clean.
-                    // This allows the HOME screen to be accessible only via the top bar.
-
-
-                    NavigationRailItem(
-                        selected = currentScreen == screen,
-
-                        onClick = { navController.navigate(screen.name) },
-                        icon = {
-                            Icon(
-                                imageVector = screen.icon,
-                                contentDescription = stringResource(id = screen.num)
-                            )
-                        },
-                        label = { Text(text = stringResource(id = screen.num)) }
-                    )
-                }
-
-            }
             Column (
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
-                modifier = Modifier
-
+                modifier = modifier
                     .padding(padding)
                     .fillMaxWidth(),
 
             ) {
-
-                Row (
-                    modifier = Modifier
-                    .padding(padding).fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.secondaryContainer),
-                ) {
-                    Text(
-                        text = stringResource(id = currentScreen.num),
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                       textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                        modifier = Modifier.padding(16.dp)
-
-
-                    )
-                }
-
-
                 NavHost(
                     navController = navController,
                     startDestination = NavigationDestination.HOME.name,
-                    modifier = Modifier.padding(padding)
+                    modifier = modifier
                 ) {
                     composable(NavigationDestination.HOME.name) {
-                        HomeViewScreen(viewModel = homeViewModel)
+                        HomeViewScreen(modifier = modifier, viewModel = homeViewModel)
                     }
                     composable(NavigationDestination.CHARACTER.name) {
-                        CharacterViewScreen(viewModel = characterViewModel)
+                        CharacterViewScreen(modifier = modifier, viewModel = characterViewModel)
                     }
                     composable(NavigationDestination.SESSION.name) {
-                        SessionViewScreen(viewModel = sessionViewModel)
+                        SessionViewScreen(modifier = modifier, viewModel = sessionViewModel)
                     }
                     composable(NavigationDestination.PLACE.name) {
-                        PlaceViewScreen(viewModel = placeViewModel)
+                        PlaceViewScreen(modifier = modifier, viewModel = placeViewModel)
                     }
                     composable(NavigationDestination.QUEST.name) {
-                        QuestViewScreen(viewModel = questViewModel)
+                        QuestViewScreen(modifier = modifier, viewModel = questViewModel)
                     }
                 }
             }
@@ -160,7 +133,49 @@ fun Navigation(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+fun AppBottomBar(
+    modifier: Modifier = Modifier,
+    currentScreen: NavigationDestination,
+    canNavigateBack: Boolean,
+    showMenu: Boolean,
+    navigateUp: () -> Unit,
+    navigateHome: () -> Unit,
+    navigateTo: (NavigationDestination) -> Unit
+) {
+    BottomAppBar(
+        modifier = modifier.fillMaxWidth(),
+        contentColor = MaterialTheme.colorScheme.primaryContainer,
+        containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        content = {
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = modifier.fillMaxWidth()
+            ) {
+                NavigationDestination.entries.forEach { screen ->
+                    if (screen != NavigationDestination.HOME) {
+                        IconButton(
+                            onClick = { navigateTo(screen) },
+                            colors = IconButtonDefaults.iconButtonColors(
+                                contentColor = contentColorFor(MaterialTheme.colorScheme.onPrimaryContainer)
+                            )
+                        ) {
+                            Icon(
+                                imageVector = screen.icon,
+                                contentDescription = stringResource(id = screen.num)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 fun AppTopBar(
+    modifier: Modifier,
     currentScreen: NavigationDestination,
     canNavigateBack: Boolean,
     showMenu: Boolean,
@@ -170,6 +185,7 @@ fun AppTopBar(
 
     ) {
     TopAppBar(
+        modifier = modifier,
         title = {
             Text(text = stringResource(id = currentScreen.num))
         },
